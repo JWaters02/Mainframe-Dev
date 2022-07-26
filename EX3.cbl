@@ -1,4 +1,4 @@
-              IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID.   EX3.
        AUTHOR.       Joshua Waters.
        DATE-WRITTEN. 18/07/22.
@@ -35,7 +35,6 @@
 
        PROGRAM-CONTROL.
            OPEN INPUT FILEIN.
-           READ FILEIN AT END MOVE 'Y' TO WS-EOF-POINT.
            PERFORM READ-DATA UNTIL WS-EOF-POINT = 'Y'.
            CLOSE FILEIN.
 
