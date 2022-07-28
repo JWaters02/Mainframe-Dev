@@ -65,9 +65,6 @@
        01 WS-CMP1-IN-COUNT                   PIC 9(5) VALUE 0.
        01 WS-CMP2-IN-COUNT                   PIC 9(5) VALUE 0.
        01 WS-CMP-OUT-COUNT                   PIC 9(5) VALUE 0.
-       01 WS-BRANCH-MOVE-COUNT               PIC 9(5) VALUE 0.
-       01 WS-LAST-BRANCH                     PIC X(4).
-       01 WS-BRANCH-DESC                     PIC X(30).
       *
        PROCEDURE DIVISION.
       *
@@ -100,11 +97,11 @@
                  PERFORM 6220-READ-CMP2-IN
                  DISPLAY 'MATCHING KEYS'
               WHEN CMP1-ITEM > CMP2-ITEM
-                 PERFORM 4100-WRITE-CMP1-LAYOUT
+                 PERFORM 4000-WRITE-CMP2-LAYOUT
                  PERFORM 6220-READ-CMP2-IN
                  DISPLAY 'FOUND IN ONLY CMP1'
               WHEN CMP1-ITEM < CMP2-ITEM
-                 PERFORM 4000-WRITE-CMP2-LAYOUT
+                 PERFORM 4100-WRITE-CMP1-LAYOUT
                  PERFORM 6120-READ-CMP1-IN
                  DISPLAY 'FOUND IN ONLY CMP2'
            END-EVALUATE.
@@ -116,7 +113,9 @@
 
            PERFORM 7100-CLOSE-CMP-OUT
 
-           DISPLAY 'BRANCH MOVE COUNT: ' WS-BRANCH-MOVE-COUNT.
+           DISPLAY 'CMP1 IN COUNT: ' WS-CMP1-IN-COUNT.
+           DISPLAY 'CMP2 IN COUNT: ' WS-CMP2-IN-COUNT.
+           DISPLAY 'CMP OUT COUNT: ' WS-CMP-OUT-COUNT.
 
        4000-WRITE-CMP2-LAYOUT.
            MOVE CMP2-ITEM TO CMP-ITEM
@@ -138,8 +137,8 @@
            END-IF.
 
        6120-READ-CMP1-IN.
-           IF NOT CMP-IN-EOF
-               READ CMP1-IN.
+           IF NOT CMP1-IN-EOF
+               READ CMP1-IN
                IF NOT CMP1-IN-OK AND NOT CMP1-IN-EOF
                   DISPLAY '** CMP1-IN FILE IS NOT OK **'
                   DISPLAY '** READ CMP1-IN: ' CMP1-RECORD
@@ -149,7 +148,7 @@
                      ADD 1 TO WS-CMP1-IN-COUNT
                   END-IF
                END-IF
-               IF CMP-IN-EOF
+               IF CMP1-IN-EOF
                   MOVE HIGH-VALUES TO CMP1-ITEM
                END-IF
            END-IF.
@@ -163,15 +162,20 @@
            END-IF.
 
        6220-READ-CMP2-IN.
-           READ CMP2-IN.
-           IF NOT CMP2-IN-OK AND NOT CMP2-IN-EOF
-              DISPLAY '** CMP2-IN FILE IS NOT OK **'
-              DISPLAY '** READ CMP2-IN: ' CMP2-RECORD
-              PERFORM 9999-ABEND
-           ELSE
-              IF CMP2-IN-OK
-                 ADD 1 TO WS-CMP2-IN-COUNT
-              END-IF
+           IF NOT CMP2-IN-EOF
+               READ CMP2-IN
+               IF NOT CMP2-IN-OK AND NOT CMP2-IN-EOF
+                  DISPLAY '** CMP2-IN FILE IS NOT OK **'
+                  DISPLAY '** READ CMP2-IN: ' CMP2-RECORD
+                  PERFORM 9999-ABEND
+               ELSE
+                  IF CMP2-IN-OK
+                     ADD 1 TO WS-CMP2-IN-COUNT
+                  END-IF
+               END-IF
+               IF CMP2-IN-EOF
+                  MOVE HIGH-VALUES TO CMP2-ITEM
+               END-IF
            END-IF.
 
        6300-OPEN-CMP-OUT.
