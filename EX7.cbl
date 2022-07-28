@@ -99,11 +99,11 @@
               WHEN CMP1-ITEM > CMP2-ITEM
                  PERFORM 4000-WRITE-CMP2-LAYOUT
                  PERFORM 6220-READ-CMP2-IN
-                 DISPLAY 'FOUND IN ONLY CMP1'
+                 DISPLAY 'FOUND IN ONLY CMP2'
               WHEN CMP1-ITEM < CMP2-ITEM
                  PERFORM 4100-WRITE-CMP1-LAYOUT
                  PERFORM 6120-READ-CMP1-IN
-                 DISPLAY 'FOUND IN ONLY CMP2'
+                 DISPLAY 'FOUND IN ONLY CMP1'
            END-EVALUATE.
 
        3000-END-PROCESS.
